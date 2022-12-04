@@ -13,6 +13,8 @@ SERVER_PORT = 10001
 
 logintokens = None
 
+dc = True
+
 # If you don't how to get them that's unfortunate..
 coid = 'your coid'
 token = 'your token'
@@ -24,6 +26,8 @@ packetQueue = []
 # start the bot
 def Connect():
     global client
+    global dc
+    dc = False
     client = sock.socket(sock.AF_INET, sock.SOCK_STREAM)
     global SERVER_IP
     print (f'Connecting to {SERVER_IP}')
@@ -35,6 +39,8 @@ def Connect():
 
 # Stops the bot from running
 def Disconnect():
+    global dc
+    dc = True
     global client
     client.close()
     packetQueue.clear()
@@ -134,11 +140,13 @@ def TimeStamp():
     return dateNow
     
 def SyncTimeTick():
-    print (TimeStamp())
-    pushPacket({ "ID": "ST", "STime": TimeStamp() })
-    sendAll()
-    global synctime
-    synctime = threading.Timer(2, SyncTimeTick).run()
+    global dc
+    if dc != True:
+        print (TimeStamp())
+        pushPacket({ "ID": "ST", "STime": TimeStamp() })
+        sendAll()
+        global synctime
+        synctime = threading.Timer(2, SyncTimeTick).run()
 
 if __name__ == '__main__':
     Connect()
