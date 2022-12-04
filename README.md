@@ -1,4 +1,5 @@
 # PW-bot
+# this is my second time using python
 
 you need pymongo for this to work
 
