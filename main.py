@@ -17,6 +17,8 @@ logintokens = None
 coid = 'your coid'
 token = 'your token'
 
+worldName = 'blackperson'
+
 packetQueue = []
 
 # start the bot
@@ -112,7 +114,7 @@ def onPacket(data):
                 Redirect(sock.gethostbyname(packet["IP"]))
             
             elif pktID == 'GPd':
-                pushPacket({ "ID": "TTjW", "W": "KRAKSCLEAR", "Amt": 0 })
+                pushPacket({ "ID": "TTjW", "W": worldName, "Amt": 0 })
             
             elif pktID == 'GWC':
                 global synctime
