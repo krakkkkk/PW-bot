@@ -174,12 +174,13 @@ def sendMove(pos_x, pos_y):
 
     if x != new_x or y != new_y:
         buf = []
-        y = new_x.to_bytes(4, byteorder='little')
-        for x in y:
-            buf.append(x)
-        y = new_y.to_bytes(4, byteorder='little')
-        for x in y:
-            buf.append(x)
+        yyy = new_x.to_bytes(4, byteorder='little')
+        for z in yyy:
+            buf.append(z)
+        yyy = new_y.to_bytes(4, byteorder='little')
+        for z in yyy:
+            buf.append(z)
+
 
         print(buf)
         pushPacket({"ID": "mp", "pM": buf})
