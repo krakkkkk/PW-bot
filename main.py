@@ -100,6 +100,8 @@ def sendAll():
     packetQueue.clear()
 
 
+
+
 # what the program must do when receiving a packet
 def onPacket(data_received):
     global client, spawned, World, sync_time
@@ -123,12 +125,11 @@ def onPacket(data_received):
             print(packet)
             print(onWorld(), spawned)
             if onWorld() and spawned is False:
-
+                spawned = True
                 spawn_x = World["WorldStartPoint"]["x"] / 3.2
                 spawn_y = World["WorldStartPoint"]["y"] / 3.2
                 print(spawn_x, spawn_y)
                 sendMove(spawn_x, spawn_y)
-                spawned = True
 
             pkt_id = packet["ID"]
 
@@ -163,7 +164,7 @@ def onWorld():
     global World
     if World is None:
         return False
-    bob = TimeStamp() - World["LoadTime"] >= 3000
+    bob = TimeStamp() - World["LoadTime"] >= 2000
     print(f'ON WORLD {bob}')
     return bob
 
@@ -173,16 +174,11 @@ def sendMove(pos_x, pos_y):
     global x, y
 
     if x != new_x or y != new_y:
-        buf = []
-        yyy = new_x.to_bytes(4, byteorder='little')
-        for z in yyy:
-            buf.append(z)
-        yyy = new_y.to_bytes(4, byteorder='little')
-        for z in yyy:
-            buf.append(z)
-
-
+        buf = bytearray(8)
+        buf[0:4] = new_x.to_bytes(4)
+        buf[4:8] = new_y.to_bytes(4)
         print(buf)
+
         pushPacket({"ID": "mp", "pM": buf})
 
     pushPacket({"ID": "mP", "t": TimeStamp(), "x": pos_x, "y": pos_y, "a": 1, "d": 7})
@@ -194,12 +190,8 @@ def sendMove(pos_x, pos_y):
 
 def SyncTimeTick():
     global dc, spawned, sync_time
-    if dc is not True and spawned is False:
+    if dc is not True:
         pushPacket({"ID": "ST", "STime": TimeStamp()})
-        sendAll()
-        sync_time = threading.Timer(2, SyncTimeTick).run()
-    elif dc is False and spawned is True:
-        pushPacket({"ID": "mP"})
         sendAll()
         sync_time = threading.Timer(2, SyncTimeTick).run()
 
